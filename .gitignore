@@ -1,0 +1,11 @@
+Python virtual environment
+
+.venv/
+venv/
+*/.venv/
+*/venv/
+
+Python cache files
+
+pycache/
+*.pyc
