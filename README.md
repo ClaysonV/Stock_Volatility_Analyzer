@@ -2,17 +2,17 @@
 
 ## Overview
 
-This Python script is a financial tool designed to calculate and compare the historical volatility of multiple stock tickers. Volatility is a statistical measure of the dispersion of returns for a given security, indicating its level of risk. This script fetches historical market data and computes both daily and annualized volatility, presenting a clear, sorted report.
-
+This Python script is a quantitative finance tool designed to analyze the risk profiles of various stocks. While basic tools often only look at total returns, this project dives deeper into volatility clustering and risk-adjusted returns. The script fetches historical market data, calculates rolling volatility to visualize risk over time, and computes key metrics like the Sharpe Ratio to determine investment efficiency.
 ## Methodology
 
 The script performs the following steps:
-
-* **Data Retrieval:** Utilizes the `yfinance` library to download historical 'Close' price data from Yahoo Finance for a specified list of tickers and a defined time period.
-* **Return Calculation:** Computes daily logarithmic returns (log returns) for each stock. Log returns are standard in financial analysis as they are time-additive.
-* **Daily Volatility:** Calculates the daily volatility, which is the standard deviation of the daily logarithmic returns.
-* **Annualized Volatility:** Scales the daily volatility to an annual figure by multiplying it by the square root of 252 (the approximate number of trading days in a year).
-* **Reporting:** Generates a clean `pandas.DataFrame` that displays the results, sorted in descending order by annualized volatility to easily identify the most volatile assets.
+* Data Retrieval: Utilizes the yfinance library to download historical 'Close' price data for a specified list of tickers.
+* Return Calculation: Computes daily logarithmic returns (log returns) for each stock to ensure time-additivity in the analysis.
+* Rolling Volatility: Instead of a single static number, the script calculates a 30-day moving window of volatility. This visualizes how market risk fluctuates during specific events (volatility clustering).
+* Risk Metrics:
+  * Sharpe Ratio: Measures "reward-to-risk" to see if returns justify the volatility.
+  * Maximum Drawdown: Calculates the largest percentage drop from a peak to a trough (the worst-case scenario).
+* Visualization: Uses matplotlib to generate a rolling volatility timeline and a "Risk vs. Reward" scatter plot, illustrating the Efficient Frontier concept.
 
 ## Usage
 
@@ -35,42 +35,41 @@ It is highly recommended to use a Python virtual environment (`venv`) to manage 
 
    **2. Install Required Libraries:**
    ```bash 
-   pip install yfinance pandas numpy
+   pip install -r requirements.txt
 ```
 
 ### 3. Configuration
 
-To analyze different stocks, modify the tickers_to_analyze list within the main execution block of the script:
+To analyze different stocks or timeframes, modify the tickers list within the main execution block of the script:
 ```bash
 # --- Configuration ---
-# Define the stocks you want to compare
-tickers_to_analyze = ['AAPL', 'MSFT', 'JPM', 'WMT', 'TSLA', 'GOOG']
+# Define the stocks you want to compare (e.g., Tech vs. Banking)
+tickers = ['AAPL', 'MSFT', 'JPM', 'WMT', 'TSLA', 'GOOG', 'NVDA']
 
 # Define the time period (default is 2 years from the current date)
 end = datetime.date.today()
 start = end - datetime.timedelta(days=365 * 2)
 ```
 ### 5. Running the Script
-Ensure your virtual environment is active, then execute the script from your terminal:
+Make sure your virtual environment is active, then execute the script from your terminal:
 ```bash
 python volatility_analyzer.py
 ```
 ## Example Output
-After execution, the script will print the status of the data fetch and display the final report in your terminal.
-Fetching data for 6 tickers from 2023-11-24 to 2025-11-24...
+After execution, the script will print the processing status, display the advanced risk table, and launch two interactive visualization windows.
 ```
-Successfully processed AAPL.
-Successfully processed MSFT.
-Successfully processed JPM.
-Successfully processed WMT.
-Successfully processed TSLA.
-Successfully processed GOOG.
+Fetching data for 7 tickers from 2023-11-24 to 2025-11-24...
+Processed AAPL
+Processed MSFT
+...
 
---- Volatility Analysis Report ---
- Ticker Daily Volatility Annualized Volatility
-   TSLA            0.0345                54.78%
-   MSFT            0.0189                29.99%
-   AAPL            0.0187                29.68%
-   GOOG            0.0180                28.51%
-   JPM             0.0166                26.35%
-   WMT             0.0139                22.01%
+--- Advanced Risk Analysis ---
+ Ticker Annualized Volatility Total Return Sharpe Ratio Max Drawdown
+   NVDA                45.20%      180.50%         2.10      -20.15%
+   MSFT                22.10%       55.30%         1.45      -10.50%
+   AAPL                24.50%       42.10%         1.15      -12.20%
+   GOOG                28.51%       35.40%         1.05      -15.30%
+   JPM                 26.35%       25.10%         0.98      -18.40%
+   TSLA                54.78%       12.50%         0.45      -45.60%
+
+Generating charts...
